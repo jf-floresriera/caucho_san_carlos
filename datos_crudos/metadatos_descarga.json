@@ -2,7 +2,7 @@
   "proyecto": "Lote San Carlos – clima y cultivo de caucho",
   "cuaderno": "Analisis_SanCarlos_clima_cultivo.ipynb",
   "modo_datos": "reutilizar",
-  "ejecutado": "2026-10-27T15:00:11",
+  "ejecutado": "2026-10-27T16:11:04",
   "periodo": [
     "2011-01-01",
     "2025-12-31"
@@ -44,7 +44,7 @@
         "models": "era5_land"
       },
       "fecha_descarga": "2026-10-27T14:59:58",
-      "origen_en_esta_ejecucion": "descargado",
+      "origen_en_esta_ejecucion": "reutilizado",
       "bytes": 4339565,
       "sha256": "26765e7b9fca736d54b8f2847f1f7515760b4da5831723f2398c6e7750344291",
       "nota": "celda del modelo: 4.2000, -72.5000; elevación 222.0 m"
@@ -63,7 +63,7 @@
         "models": "era5"
       },
       "fecha_descarga": "2026-10-27T15:00:01",
-      "origen_en_esta_ejecucion": "descargado",
+      "origen_en_esta_ejecucion": "reutilizado",
       "bytes": 190499,
       "sha256": "6ac00945306759b26859877b37e9ec4d0ef2faa55949520cf556e75e4d8bb5b2",
       "nota": "celda del modelo: 4.2500, -72.5000; elevación 222.0 m"
@@ -82,7 +82,7 @@
         "models": "era5_land"
       },
       "fecha_descarga": "2026-10-27T15:00:06",
-      "origen_en_esta_ejecucion": "descargado",
+      "origen_en_esta_ejecucion": "reutilizado",
       "bytes": 4339757,
       "sha256": "931e9f52e1378526e9f104a186f49539e1ccceb88590771714b58e12aed3f8d7",
       "nota": "celda del modelo: 4.3000, -72.6000; elevación 180.0 m"
@@ -101,7 +101,7 @@
         "models": "era5"
       },
       "fecha_descarga": "2026-10-27T15:00:09",
-      "origen_en_esta_ejecucion": "descargado",
+      "origen_en_esta_ejecucion": "reutilizado",
       "bytes": 190542,
       "sha256": "558c5953ab5b8ce0b51a29bd7cb2313dff695de26f652d5ee28ee6b84d6f0098",
       "nota": "celda del modelo: 4.2500, -72.5000; elevación 180.0 m"
@@ -153,18 +153,18 @@
       "nota": ""
     },
     {
-      "archivo": "climate/datos_crudos/palomera/ideam_aut_horario.csv",
-      "fuente": "IDEAM vía datos.gov.co (serie horaria del trabajo climate/)",
+      "archivo": "san_carlos/datos_crudos/palomera/ideam_aut_t_crudo.csv",
+      "fuente": "IDEAM vía datos.gov.co – Temperatura Ambiente del Aire 2 m",
       "url": "https://www.datos.gov.co/resource/sbwg-7ju4.csv",
       "parametros": {
         "$select": "fechaobservacion,valorobservado",
         "$where": "codigoestacion='0035185010'",
         "$order": "fechaobservacion"
       },
-      "fecha_descarga": "2026-10-07T15:35:58 (fecha del archivo)",
+      "fecha_descarga": "2026-10-27T16:10:40 (fecha del archivo)",
       "origen_en_esta_ejecucion": "reutilizado",
-      "bytes": 4018831,
-      "sha256": "6d08ed58097c06e28b0b7f720c2a489b44452ee9e07a1ae3529ed9bb7d2aac45",
+      "bytes": 5257058,
+      "sha256": "4ed7e6bc9243d1997444796890d3085785672dafd33574683b948a8cc49bfd34",
       "nota": ""
     },
     {
