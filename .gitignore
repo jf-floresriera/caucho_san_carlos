@@ -1,0 +1,16 @@
+# Datos de campo sin publicar: NO se suben (van en la carpeta padre, ver README)
+Fenologia_base*.xlsx
+*.xlsx.lnk
+
+# Archivos temporales
+*.part
+__pycache__/
+.ipynb_checkpoints/
+scripts/*_respaldo.ipynb
+
+# Descargas de prueba del modo "descargar" (se pueden subir a propósito si se quiere comparar)
+datos_crudos_descarga_*/
+resultados_descarga_*/
+
+# Copias de trabajo (el historial de git ya guarda las versiones)
+scripts/construir_cuaderno_v2.py

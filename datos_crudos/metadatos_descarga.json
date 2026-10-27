@@ -1,0 +1,236 @@
+{
+  "proyecto": "Lote San Carlos – clima y cultivo de caucho",
+  "cuaderno": "Analisis_SanCarlos_clima_cultivo.ipynb",
+  "modo_datos": "reutilizar",
+  "ejecutado": "2026-10-27T15:00:11",
+  "periodo": [
+    "2011-01-01",
+    "2025-12-31"
+  ],
+  "lote": {
+    "nombre": "Lote San Carlos",
+    "lat": 4.1876444444444445,
+    "lon": -72.537375
+  },
+  "estacion": {
+    "nombre": "La Palomera AUT [35185010]",
+    "codigo": "0035185010",
+    "lat": 4.260321,
+    "lon": -72.564525
+  },
+  "en_colab": false,
+  "software": {
+    "python": "3.12.3",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "scipy": "1.18.1",
+    "statsmodels": "0.15.0",
+    "matplotlib": "3.11.2",
+    "requests": "2.34.2",
+    "openpyxl": "3.1.5"
+  },
+  "archivos": [
+    {
+      "archivo": "san_carlos/datos_crudos/sancarlos/era5land_horario.csv",
+      "fuente": "ERA5-Land (ECMWF/Copernicus) vía Open-Meteo",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "parametros": {
+        "latitude": 4.187644,
+        "longitude": -72.537375,
+        "start_date": "2011-01-01",
+        "end_date": "2025-12-31",
+        "timezone": "America/Bogota",
+        "hourly": "temperature_2m,relative_humidity_2m,dew_point_2m",
+        "models": "era5_land"
+      },
+      "fecha_descarga": "2026-10-27T14:59:58",
+      "origen_en_esta_ejecucion": "descargado",
+      "bytes": 4339565,
+      "sha256": "26765e7b9fca736d54b8f2847f1f7515760b4da5831723f2398c6e7750344291",
+      "nota": "celda del modelo: 4.2000, -72.5000; elevación 222.0 m"
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/sancarlos/era5_diario.csv",
+      "fuente": "ERA5 (ECMWF/Copernicus) vía Open-Meteo",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "parametros": {
+        "latitude": 4.187644,
+        "longitude": -72.537375,
+        "start_date": "2011-01-01",
+        "end_date": "2025-12-31",
+        "timezone": "America/Bogota",
+        "daily": "shortwave_radiation_sum,et0_fao_evapotranspiration,precipitation_sum,sunshine_duration",
+        "models": "era5"
+      },
+      "fecha_descarga": "2026-10-27T15:00:01",
+      "origen_en_esta_ejecucion": "descargado",
+      "bytes": 190499,
+      "sha256": "6ac00945306759b26859877b37e9ec4d0ef2faa55949520cf556e75e4d8bb5b2",
+      "nota": "celda del modelo: 4.2500, -72.5000; elevación 222.0 m"
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/palomera/era5land_horario.csv",
+      "fuente": "ERA5-Land (ECMWF/Copernicus) vía Open-Meteo",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "parametros": {
+        "latitude": 4.260321,
+        "longitude": -72.564525,
+        "start_date": "2011-01-01",
+        "end_date": "2025-12-31",
+        "timezone": "America/Bogota",
+        "hourly": "temperature_2m,relative_humidity_2m,dew_point_2m",
+        "models": "era5_land"
+      },
+      "fecha_descarga": "2026-10-27T15:00:06",
+      "origen_en_esta_ejecucion": "descargado",
+      "bytes": 4339757,
+      "sha256": "931e9f52e1378526e9f104a186f49539e1ccceb88590771714b58e12aed3f8d7",
+      "nota": "celda del modelo: 4.3000, -72.6000; elevación 180.0 m"
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/palomera/era5_diario.csv",
+      "fuente": "ERA5 (ECMWF/Copernicus) vía Open-Meteo",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "parametros": {
+        "latitude": 4.260321,
+        "longitude": -72.564525,
+        "start_date": "2011-01-01",
+        "end_date": "2025-12-31",
+        "timezone": "America/Bogota",
+        "daily": "shortwave_radiation_sum,et0_fao_evapotranspiration,precipitation_sum,sunshine_duration",
+        "models": "era5"
+      },
+      "fecha_descarga": "2026-10-27T15:00:09",
+      "origen_en_esta_ejecucion": "descargado",
+      "bytes": 190542,
+      "sha256": "558c5953ab5b8ce0b51a29bd7cb2313dff695de26f652d5ee28ee6b84d6f0098",
+      "nota": "celda del modelo: 4.2500, -72.5000; elevación 180.0 m"
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/chirps_diario.csv",
+      "fuente": "CHIRPS v2.0 (UCSB-CHC) vía ClimateSERV",
+      "url": "https://climateserv.servirglobal.net/api/",
+      "parametros": {
+        "datatype": "0 (CHIRPS v2.0 diario)",
+        "operationtype": "5 (promedio espacial)",
+        "intervaltype": 0,
+        "poligono": "cuadrado de ±0.0024° alrededor de cada punto (dentro de un píxel)",
+        "bloques": "5 años",
+        "periodo": [
+          "2011-01-01",
+          "2025-12-31"
+        ],
+        "puntos": {
+          "sancarlos": [
+            4.187644,
+            -72.537375
+          ],
+          "palomera": [
+            4.260321,
+            -72.564525
+          ]
+        }
+      },
+      "fecha_descarga": "2026-10-27T12:51:14 (fecha del archivo)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 160404,
+      "sha256": "5e34a4159189275e88a877010e31c4f9d08d09612ff287459643af6d1e09bb87",
+      "nota": ""
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/palomera/ideam_aut_hr_crudo.csv",
+      "fuente": "IDEAM vía datos.gov.co – Humedad del Aire 2 m",
+      "url": "https://www.datos.gov.co/resource/uext-mhny.csv",
+      "parametros": {
+        "$select": "fechaobservacion,valorobservado",
+        "$where": "codigoestacion='0035185010'",
+        "$order": "fechaobservacion"
+      },
+      "fecha_descarga": "2026-10-27T14:28:13 (fecha del archivo)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 3766248,
+      "sha256": "5dc4e66137f8280216740420bc91601465d191a7613ab4c7c964d6a8dff8d984",
+      "nota": ""
+    },
+    {
+      "archivo": "climate/datos_crudos/palomera/ideam_aut_horario.csv",
+      "fuente": "IDEAM vía datos.gov.co (serie horaria del trabajo climate/)",
+      "url": "https://www.datos.gov.co/resource/sbwg-7ju4.csv",
+      "parametros": {
+        "$select": "fechaobservacion,valorobservado",
+        "$where": "codigoestacion='0035185010'",
+        "$order": "fechaobservacion"
+      },
+      "fecha_descarga": "2026-10-07T15:35:58 (fecha del archivo)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 4018831,
+      "sha256": "6d08ed58097c06e28b0b7f720c2a489b44452ee9e07a1ae3529ed9bb7d2aac45",
+      "nota": ""
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/palomera/ideam_aut_tmax_crudo.csv",
+      "fuente": "IDEAM vía datos.gov.co – Temperatura Máxima del Aire 2 m",
+      "url": "https://www.datos.gov.co/resource/ccvq-rp9s.csv",
+      "parametros": {
+        "$select": "fechaobservacion,valorobservado",
+        "$where": "codigoestacion='0035185010'",
+        "$order": "fechaobservacion"
+      },
+      "fecha_descarga": "2026-10-27T14:23:17 (fecha del archivo)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 4218865,
+      "sha256": "0d6e36d8947a2d987c201dcefc6420a5ba3ba875a669936df8913e3762a7a333",
+      "nota": ""
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/palomera/ideam_aut_tmin_crudo.csv",
+      "fuente": "IDEAM vía datos.gov.co – Temperatura Mínima del Aire 2 m",
+      "url": "https://www.datos.gov.co/resource/afdg-3zpb.csv",
+      "parametros": {
+        "$select": "fechaobservacion,valorobservado",
+        "$where": "codigoestacion='0035185010'",
+        "$order": "fechaobservacion"
+      },
+      "fecha_descarga": "2026-10-27T14:22:58 (fecha del archivo)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 4732171,
+      "sha256": "d7214b844005b7c19d8bcac480948e7d85aacb5d6c4ec64f24d28ceff7fe856b",
+      "nota": ""
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/palomera/ideam_aut_prec_crudo.csv",
+      "fuente": "IDEAM vía datos.gov.co – Precipitación",
+      "url": "https://www.datos.gov.co/resource/s54a-sgyg.csv",
+      "parametros": {
+        "$select": "fechaobservacion,valorobservado",
+        "$where": "codigoestacion='0035185010'",
+        "$order": "fechaobservacion"
+      },
+      "fecha_descarga": "2026-10-27T12:46:02 (fecha del archivo)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 9079238,
+      "sha256": "ca642ce098abbe539b8984512b2f5d7778751f68def3a924ef82e4d1c1cbdb49",
+      "nota": ""
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/palomera/dhime/DHIME_HR_LaPalomera.xlsx",
+      "fuente": "IDEAM DHIME (descarga manual)",
+      "url": "http://dhime.ideam.gov.co/atencionciudadano/",
+      "parametros": {
+        "estacion": "La Palomera AUT [35185010]",
+        "variables": [
+          "hr"
+        ],
+        "parametros": [
+          "Brillo solar total diario,Humedad relativa del aire a 2 metros media diaria"
+        ],
+        "frecuencia": "Diaria"
+      },
+      "fecha_descarga": "02/08/2026 02:59 (reporte DHIME)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 165048,
+      "sha256": "f4d6cd752358a6b20244dbd46cf266492bd4113b6d7d5a7a630a290ac585714b",
+      "nota": "reporte DHIME generado el 02/08/2026 02:59"
+    }
+  ]
+}

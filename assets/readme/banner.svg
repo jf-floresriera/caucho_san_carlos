@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-labelledby="t d">
+  <title id="t">caucho_san_carlos — Clima y enfermedades foliares del caucho, lote San Carlos</title>
+  <desc id="d">Banner animado: lluvia que cae sobre el lote y un pulso que recorre las etapas Datos, Validación, Corrección HR y Clima × Enfermedad.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1f17"/><stop offset="1" stop-color="#16271d"/>
+    </linearGradient>
+    <linearGradient id="acento" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1baf7a"/><stop offset="1" stop-color="#9be15d"/>
+    </linearGradient>
+    <linearGradient id="brillo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="surcos" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(-14)">
+      <path d="M0 30H60" fill="none" stroke="#1baf7a" stroke-opacity="0.07" stroke-width="1"/>
+      <animateTransform attributeName="patternTransform" type="translate" from="0 0" to="0 60" dur="8s" repeatCount="indefinite" additive="sum"/>
+    </pattern>
+    <g id="gota"><path d="M0 0 C3 6 5 9 5 12 A5 5 0 0 1 -5 12 C-5 9 -3 6 0 0Z" fill="#6fb8ff" fill-opacity="0.55"/></g>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#bg)"/>
+  <rect width="1200" height="360" fill="url(#surcos)"/>
+  <rect x="0" y="0" width="8" height="360" fill="url(#acento)"/>
+
+  <!-- lluvia -->
+  <g>
+    <use href="#gota" x="900" y="-20"><animate attributeName="y" values="-20;230" dur="2.6s" repeatCount="indefinite"/></use>
+    <use href="#gota" x="960" y="-20"><animate attributeName="y" values="-20;230" dur="3.1s" begin="0.7s" repeatCount="indefinite"/></use>
+    <use href="#gota" x="1020" y="-20"><animate attributeName="y" values="-20;230" dur="2.3s" begin="1.3s" repeatCount="indefinite"/></use>
+    <use href="#gota" x="1080" y="-20"><animate attributeName="y" values="-20;230" dur="2.9s" begin="0.3s" repeatCount="indefinite"/></use>
+    <use href="#gota" x="1135" y="-20"><animate attributeName="y" values="-20;230" dur="3.4s" begin="1.8s" repeatCount="indefinite"/></use>
+  </g>
+
+  <!-- hoja de caucho (trifoliada) que se mece -->
+  <g transform="translate(1010 150)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-5;5;-5" dur="5s" repeatCount="indefinite"/>
+      <path d="M0 60 L0 0" stroke="#5c8f4a" stroke-width="3"/>
+      <path d="M0 0 C-14 -20 -10 -58 0 -72 C10 -58 14 -20 0 0Z" fill="#1baf7a" fill-opacity="0.85"/>
+      <path d="M0 0 C-22 -4 -52 -30 -58 -46 C-38 -48 -12 -24 0 0Z" fill="#1baf7a" fill-opacity="0.65"/>
+      <path d="M0 0 C22 -4 52 -30 58 -46 C38 -48 12 -24 0 0Z" fill="#1baf7a" fill-opacity="0.65"/>
+      <circle cx="-30" cy="-30" r="4" fill="#eb6834" fill-opacity="0.9"><animate attributeName="r" values="2;5;2" dur="4s" repeatCount="indefinite"/></circle>
+    </g>
+  </g>
+
+  <text x="60" y="74" font-family="'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace" font-size="14" fill="#9be15d" letter-spacing="4">CLIMA  ·  FENOLOGÍA  ·  ENFERMEDAD</text>
+  <text x="60" y="134" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="48" font-weight="700" fill="#f2f5ef">caucho_san_carlos</text>
+  <text x="60" y="170" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="21" fill="#cfe0d2">Hevea brasiliensis · Lote San Carlos, Meta (Orinoquía)</text>
+  <text x="60" y="200" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" fill="#8ea597">ERA5-Land · ERA5 · CHIRPS · IDEAM La Palomera — SALB y Antracnosis, enero–abril 2016–2020</text>
+
+  <!-- tubería animada de 4 etapas -->
+  <g font-family="'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace">
+    <line x1="150" y1="290" x2="1050" y2="290" stroke="#2c4235" stroke-width="3"/>
+    <circle cx="150" cy="290" r="7" fill="#f2f5ef">
+      <animate attributeName="cx" values="150;1050;1050" keyTimes="0;0.9;1" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.88;0.92;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="150" y="287" width="0" height="6" fill="url(#brillo)">
+      <animate attributeName="width" values="0;900;900;0" keyTimes="0;0.9;0.93;1" dur="8s" repeatCount="indefinite"/>
+    </rect>
+
+    <g>
+      <circle cx="150" cy="290" r="26" fill="#0f1f17" stroke="#2c4235" stroke-width="2"/>
+      <circle cx="150" cy="290" r="26" fill="none" stroke="url(#acento)" stroke-width="3" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;1;0.4;0.25" keyTimes="0;0.02;0.2;1" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <text x="150" y="297" text-anchor="middle" font-size="13" fill="#9be15d" font-weight="700">1</text>
+      <text x="150" y="338" text-anchor="middle" font-size="13" fill="#8ea597" letter-spacing="1">DATOS</text>
+    </g>
+    <g>
+      <circle cx="450" cy="290" r="26" fill="#0f1f17" stroke="#2c4235" stroke-width="2"/>
+      <circle cx="450" cy="290" r="26" fill="none" stroke="url(#acento)" stroke-width="3" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.25;1;0.4;0.25" keyTimes="0;0.29;0.31;0.5;1" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <text x="450" y="297" text-anchor="middle" font-size="13" fill="#9be15d" font-weight="700">2</text>
+      <text x="450" y="338" text-anchor="middle" font-size="13" fill="#8ea597" letter-spacing="1">VALIDACIÓN</text>
+    </g>
+    <g>
+      <circle cx="750" cy="290" r="26" fill="#0f1f17" stroke="#2c4235" stroke-width="2"/>
+      <circle cx="750" cy="290" r="26" fill="none" stroke="url(#acento)" stroke-width="3" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.25;1;0.4;0.25" keyTimes="0;0.59;0.61;0.78;1" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <text x="750" y="297" text-anchor="middle" font-size="13" fill="#9be15d" font-weight="700">3</text>
+      <text x="750" y="338" text-anchor="middle" font-size="13" fill="#8ea597" letter-spacing="1">CORRECCIÓN HR</text>
+    </g>
+    <g>
+      <circle cx="1050" cy="290" r="26" fill="#0f1f17" stroke="#2c4235" stroke-width="2"/>
+      <circle cx="1050" cy="290" r="26" fill="none" stroke="#eb6834" stroke-width="3" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.25;1;0.4;0.25" keyTimes="0;0.88;0.9;0.98;1" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <text x="1050" y="297" text-anchor="middle" font-size="13" fill="#eb6834" font-weight="700">4</text>
+      <text x="1050" y="338" text-anchor="middle" font-size="13" fill="#8ea597" letter-spacing="1">CLIMA × ENFERMEDAD</text>
+    </g>
+  </g>
+
+  <circle cx="1146" cy="34" r="5" fill="#1baf7a"><animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>
+  <text x="1128" y="39" font-family="'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace" font-size="12" fill="#8ea597" text-anchor="end">reproducible · SHA-256</text>
+</svg>
