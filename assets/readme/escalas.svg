@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-labelledby="t d">
+  <title id="t">El acuerdo estación–producto mejora al agregar en el tiempo</title>
+  <desc id="d">r de Pearson entre La Palomera y los productos, enero–abril, a escala diaria, 8 días y mensual. Horas HR≥90 % ERA5-Land: 0.70, 0.79, 0.84. Lluvia CHIRPS: 0.47, 0.64, 0.68. Lluvia ERA5: 0.46, 0.62, 0.83. T media ERA5-Land: 0.56, 0.56, 0.46.</desc>
+  <rect width="1200" height="420" rx="14" fill="#0f1f17"/>
+  <text x="40" y="48" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#f2f5ef">¿Se correlaciona La Palomera con ERA5-Land, ERA5 y CHIRPS en enero–abril?</text>
+  <text x="40" y="76" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#8ea597">r de Pearson por escala de agregación · la barra crece de diaria a 8 días a mensual</text>
+
+  <!-- leyenda -->
+  <g font-family="'SFMono-Regular', Consolas, monospace" font-size="13" fill="#cfe0d2">
+    <rect x="770" y="96" width="14" height="14" rx="3" fill="#9cc3ee"/><text x="790" y="108">diaria</text>
+    <rect x="870" y="96" width="14" height="14" rx="3" fill="#2a78d6"/><text x="890" y="108">8 días</text>
+    <rect x="970" y="96" width="14" height="14" rx="3" fill="#1baf7a"/><text x="990" y="108">mensual</text>
+  </g>
+
+  <!-- eje: 0 en x=300, 1.0 en x=1140 (840 px) -->
+  <g stroke="#24372b" stroke-width="1">
+    <line x1="300" y1="125" x2="300" y2="395"/><line x1="510" y1="125" x2="510" y2="395"/>
+    <line x1="720" y1="125" x2="720" y2="395"/><line x1="930" y1="125" x2="930" y2="395"/>
+    <line x1="1140" y1="125" x2="1140" y2="395"/>
+  </g>
+  <g font-family="'SFMono-Regular', Consolas, monospace" font-size="11" fill="#6f8577" text-anchor="middle">
+    <text x="300" y="412">0</text><text x="510" y="412">0.25</text><text x="720" y="412">0.50</text><text x="930" y="412">0.75</text><text x="1140" y="412">1.0</text>
+  </g>
+
+  <g font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#f2f5ef" text-anchor="end">
+    <text x="285" y="160">Horas HR ≥ 90 %</text><text x="285" y="178" font-size="12" fill="#8ea597">ERA5-Land</text>
+    <text x="285" y="225">Lluvia</text><text x="285" y="243" font-size="12" fill="#8ea597">CHIRPS</text>
+    <text x="285" y="290">Lluvia</text><text x="285" y="308" font-size="12" fill="#8ea597">ERA5</text>
+    <text x="285" y="355">T media</text><text x="285" y="373" font-size="12" fill="#8ea597">ERA5-Land</text>
+  </g>
+
+  <!-- barras: ancho = r * 840. Animación: crecen, se mantienen, reinician (ciclo 7 s) -->
+  <g>
+    <!-- HR90: .70 .79 .84 -->
+    <rect x="300" y="140" height="14" rx="4" fill="#9cc3ee" width="588"><animate attributeName="width" values="0;588;588;0" keyTimes="0;0.15;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="157" height="14" rx="4" fill="#2a78d6" width="664"><animate attributeName="width" values="0;0;664;664;0" keyTimes="0;0.1;0.3;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="174" height="14" rx="4" fill="#1baf7a" width="706"><animate attributeName="width" values="0;0;706;706;0" keyTimes="0;0.25;0.45;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <!-- CHIRPS: .47 .64 .68 -->
+    <rect x="300" y="205" height="14" rx="4" fill="#9cc3ee" width="395"><animate attributeName="width" values="0;395;395;0" keyTimes="0;0.15;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="222" height="14" rx="4" fill="#2a78d6" width="538"><animate attributeName="width" values="0;0;538;538;0" keyTimes="0;0.1;0.3;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="239" height="14" rx="4" fill="#1baf7a" width="571"><animate attributeName="width" values="0;0;571;571;0" keyTimes="0;0.25;0.45;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <!-- ERA5 lluvia: .46 .62 .83 -->
+    <rect x="300" y="270" height="14" rx="4" fill="#9cc3ee" width="386"><animate attributeName="width" values="0;386;386;0" keyTimes="0;0.15;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="287" height="14" rx="4" fill="#2a78d6" width="521"><animate attributeName="width" values="0;0;521;521;0" keyTimes="0;0.1;0.3;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="304" height="14" rx="4" fill="#1baf7a" width="697"><animate attributeName="width" values="0;0;697;697;0" keyTimes="0;0.25;0.45;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <!-- T media: .56 .56 .46 -->
+    <rect x="300" y="335" height="14" rx="4" fill="#9cc3ee" width="470"><animate attributeName="width" values="0;470;470;0" keyTimes="0;0.15;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="352" height="14" rx="4" fill="#2a78d6" width="470"><animate attributeName="width" values="0;0;470;470;0" keyTimes="0;0.1;0.3;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="300" y="369" height="14" rx="4" fill="#1baf7a" width="386"><animate attributeName="width" values="0;0;386;386;0" keyTimes="0;0.25;0.45;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+  </g>
+
+  <!-- valores mensuales -->
+  <g font-family="'SFMono-Regular', Consolas, monospace" font-size="13" font-weight="700" fill="#f2f5ef" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.45;0.5;0.9;1" dur="7s" repeatCount="indefinite"/>
+    <text x="1014" y="186">0.84</text><text x="879" y="251">0.68</text><text x="1005" y="316">0.83</text><text x="694" y="381">0.46</text>
+  </g>
+</svg>
