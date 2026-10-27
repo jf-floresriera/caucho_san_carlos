@@ -575,11 +575,16 @@ def leer_dhime(ruta):
     t["valor"] = pd.to_numeric(t["valor"], errors="coerce")
     return t, generado
 
+def excel_dhime(carpeta):
+    # Solo .xls/.xlsx reales: ignora los archivos de bloqueo de Excel (~$...) y LibreOffice (.~lock...)
+    return sorted(a for a in carpeta.iterdir()
+                  if a.suffix.lower() in (".xls", ".xlsx") and not a.name.startswith(("~$", ".~lock")))
+
 def cargar_dhime():
     carpeta = DHIME_DIR
-    archivos = sorted(carpeta.glob("*.xls*"))
+    archivos = excel_dhime(carpeta)
     if not archivos and MODO_DATOS == "descargar":
-        carpeta = CONGELADOS / "palomera" / "dhime"; archivos = sorted(carpeta.glob("*.xls*"))
+        carpeta = CONGELADOS / "palomera" / "dhime"; archivos = excel_dhime(carpeta)
         if archivos:
             print("   ⚠️ DHIME no tiene API: se usan los Excel DHIME de", carpeta)
     partes, inventario = [], []
