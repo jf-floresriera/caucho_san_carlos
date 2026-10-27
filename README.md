@@ -62,7 +62,21 @@ La estación está a **8.6 km** del lote. A escala diaria el acuerdo es moderado
 ![Disponibilidad de datos](resultados/figuras/2_1_disponibilidad_palomera.png)
 </details>
 
-### 2 · Problema del sensor de temperatura de La Palomera
+### 2 · Brillo solar: validación regional con Las Margaritas
+
+La Palomera **no mide brillo solar**. Por eso ERA5 se validó en la celda de **Hacienda Las Margaritas AUT [35125010]** (Puerto López), la estación más cercana que lo mide, a **39.9 km** del lote.
+
+| Enero–abril | r diaria | r 8 días | r mensual | Sesgo |
+|---|---|---|---|---|
+| ERA5 vs. Las Margaritas | 0.41 | 0.43 | 0.26 | **+5.1 h/día** |
+
+- ✅ ERA5 reproduce el **ciclo estacional**: enero–febrero es lo más soleado y junio–julio lo menos.
+- ❌ Sobreestima unas 5 h y muchas veces se queda pegado cerca de 12 h, el máximo posible. Sigue poco las diferencias entre días y entre años.
+- ⚠️ **Limitación:** es una validación **regional (40 km), no local**. Las relaciones del brillo solar con la enfermedad son **exploratorias**.
+
+![Brillo solar ERA5 vs Las Margaritas](resultados/figuras/3_4_brillo_solar_margaritas_era5.png)
+
+### 3 · Problema del sensor de temperatura de La Palomera
 
 En **2011–2012** el sensor registró medias diarias de **12–15 °C**, imposibles en los Llanos. Se conservan **las dos versiones**, con y sin filtro, y se documenta el efecto:
 
@@ -75,13 +89,13 @@ En los años del cultivo (2016–2020) no hay días afectados, así que la relac
 
 ![Sensor de T](resultados/figuras/3_3_sensor_T_palomera.png)
 
-### 3 · Corrección de la humedad de ERA5-Land
+### 4 · Corrección de la humedad de ERA5-Land
 
 ERA5-Land da noches demasiado secas. Con un **mapeo de cuantiles** por mes y bloque de 3 horas, entrenado con La Palomera y validado de forma cruzada por años, el sesgo de las horas con HR ≥ 90 % en enero–abril pasa de **−6.0 a +1.1 h/día**.
 
 ![Corrección HR](resultados/figuras/4_1_correccion_hr_mensual.png)
 
-### 4 · ¿Cambia el clima cada 8 días?
+### 5 · ¿Cambia el clima cada 8 días?
 
 **Sí, para la temperatura, la humedad y el DPV.** El periodo de 8 días explica entre el 57 % y el 71 % de la varianza (η²), y entre el 27 % y el 42 % de los pasos de un periodo al siguiente son significativos (Mann–Whitney; por azar se esperaría ~5 %). La lluvia es más errática: η² = 0.29 y solo el 8 % de los pasos son significativos.
 
@@ -93,7 +107,7 @@ ERA5-Land da noches demasiado secas. Con un **mapeo de cuantiles** por mes y blo
 ![Ene–abr por periodos de 8 días](resultados/figuras/5_2_ene_abr_periodos_8dias.png)
 </details>
 
-### 5 · Incidencia de enfermedades en los campos clonales
+### 6 · Incidencia de enfermedades en los campos clonales
 
 Para cada clon y fecha se calculan la incidencia, la severidad y el índice de McKinney, junto con los estados de la hoja (A, B, C, D), el área bajo la curva de progreso de la enfermedad (ABCPE), la necromasa y el LAI.
 
@@ -105,7 +119,7 @@ Para cada clon y fecha se calculan la incidencia, la severidad y el índice de M
 ![Necromasa y LAI](resultados/figuras/7_3_necromasa_lai.png)
 </details>
 
-### 6 · Clima × enfermedad
+### 7 · Clima × enfermedad
 
 - **Antracnosis:** la incidencia sube con la **temperatura de 25–32 días antes** (ρ = +0.55; p_FDR = 0.051, en el límite). En el modelo GEE a nivel de árbol:
   - una desviación estándar más de T media en esa ventana multiplica las probabilidades de que el árbol esté enfermo por **OR = 2.05**;
@@ -116,7 +130,7 @@ Para cada clon y fecha se calculan la incidencia, la severidad y el índice de M
 ![Mapa de correlaciones](resultados/figuras/8_1_mapa_correlaciones.png)
 ![GEE](resultados/figuras/8_2_gee_odds_ratios.png)
 
-### 7 · Secuencia anual: clima → caída de hojas → brotación → enfermedad
+### 8 · Secuencia anual: clima → caída de hojas → brotación → enfermedad
 
 ![Ciclo anual integrado](resultados/figuras/9_1_ciclo_anual_integrado.png)
 
@@ -171,7 +185,7 @@ Revisado en datos.gov.co y en [DHIME](http://dhime.ideam.gov.co/atencionciudadan
 | Brillo solar | ❌ | ❌ la estación no lo registra |
 
 - **Lluvia:** se usa el pluviómetro automático, que cubre todos los años del cultivo. *Día pluviométrico*, total mensual y total anual son parámetros DHIME de estaciones convencionales y no existen para La Palomera.
-- **Brillo solar:** solo se tiene de **ERA5**, sin validación local. La estación más cercana que lo mide es Hacienda Las Margaritas, a 39.9 km. Se reporta como variable exploratoria.
+- **Brillo solar:** se usa ERA5, validado de forma **regional** con Hacienda Las Margaritas (Puerto López, a 39.9 km), cuyo Excel DHIME está en `datos_crudos/margaritas/dhime/`. Ver el aporte 2.
 
 <img src="assets/readme/divider.svg" alt="" width="100%">
 
@@ -180,7 +194,7 @@ Revisado en datos.gov.co y en [DHIME](http://dhime.ideam.gov.co/atencionciudadan
 ```
 Analisis_SanCarlos_clima_cultivo.ipynb   cuaderno principal (Colab o local), con salidas
 datos_crudos/                            datos congelados + metadatos_descarga.json
-  sancarlos/  palomera/  chirps_diario.csv
+  sancarlos/  palomera/  margaritas/  chirps_diario.csv
 resultados/
   Base_SanCarlos_clima_cultivo.xlsx      todas las tablas (hoja LEEME)
   figuras/                               figuras PNG a 300 dpi
@@ -188,7 +202,7 @@ scripts/
   construir_cuaderno.py                  genera el cuaderno (fuente del texto y el código)
   ejecutar_cuaderno.py                   lo ejecuta en local
   descargar_socrata_reanudable.py        descarga de datos.gov.co año por año, reanudable
-  fix3.py, fix4.py                       parches aplicados (trazabilidad de los cambios)
+  fix3.py … fix5.py                      parches aplicados (trazabilidad de los cambios)
 assets/readme/                           banner y gráficos animados de este README
 ```
 
@@ -207,6 +221,7 @@ python scripts/ejecutar_cuaderno.py
 |---|---|
 | **v2** | Análisis base: validación ene–abr, corrección de HR, cambios cada 8 días, clima × enfermedad, problema del sensor de T. |
 | **v3** | Protocolo de descarga reproducible (modos, SHA-256), T máx/mín de sensores de extremos, brillo solar, lector y validación DHIME, descarga reanudable de datos.gov.co. |
+| **v3.1** | La Palomera es la única estación climática cerca del lote; validación regional del brillo solar de ERA5 con Hacienda Las Margaritas (40 km). |
 
 Al agregar T máxima y brillo solar crece el número de pruebas. Por eso los p_FDR de la v3 difieren algo de los de la v2: el mejor pasa de ≈ 0.066 a 0.051. Los ρ no cambian.
 

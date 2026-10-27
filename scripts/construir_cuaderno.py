@@ -147,7 +147,8 @@ FIGS      = RESULT / "figuras"                  # figuras PNG
 DHIME_DIR = CRUDOS / "palomera" / "dhime"       # Excel de DHIME descargados a mano (sección 1.4)
 # Serie horaria de HR/T de La Palomera del trabajo anterior (solo se usa en modo "reutilizar" si faltan los crudos)
 PREVIO_PALOMERA = RUTA_DRIVE / "climate" / "datos_crudos" / "palomera" / "ideam_aut_horario.csv"
-for c in (CRUDOS / "sancarlos", CRUDOS / "palomera", DHIME_DIR, FIGS):
+DHIME_MARG = CRUDOS / "margaritas" / "dhime"    # Excel DHIME de brillo solar de Las Margaritas
+for c in (CRUDOS / "sancarlos", CRUDOS / "palomera", DHIME_DIR, DHIME_MARG, FIGS):
     c.mkdir(parents=True, exist_ok=True)
 assert ARCHIVO_CULTIVO.exists(), f"No encuentro {ARCHIVO_CULTIVO}. Revise RUTA_DRIVE."
 
@@ -162,6 +163,10 @@ LOTE = dict(nombre="Lote San Carlos", lat=gms_a_decimal(4, 11, 15.52, "N"),
 PALOMERA = dict(nombre="La Palomera AUT [35185010]", codigo="0035185010",
                 lat=4.260321, lon=-72.564525)
 PUNTOS = {"sancarlos": LOTE, "palomera": PALOMERA}   # se descargan productos en ambos puntos
+# Estación de referencia REGIONAL solo para el brillo solar (La Palomera no lo mide).
+# Está a ~40 km del lote: se usa para validar ERA5 en su propia celda, no como dato del lote.
+MARGARITAS = dict(nombre="Hacienda Las Margaritas AUT [35125010]", codigo="0035125010",
+                  lat=4.3698889, lon=-72.2270638)
 
 # ---------------------------------------------------------------- PERIODOS
 PERIODO = ("2011-01-01", "2025-12-31")      # serie climática (climatología de 15 años)
@@ -225,6 +230,8 @@ def distancia_km(lat1, lon1, lat2, lon2):
 
 DIST_PAL = distancia_km(LOTE["lat"], LOTE["lon"], PALOMERA["lat"], PALOMERA["lon"])
 print(f"Distancia lote San Carlos – La Palomera: {DIST_PAL:.1f} km")
+DIST_MARG = distancia_km(LOTE["lat"], LOTE["lon"], MARGARITAS["lat"], MARGARITAS["lon"])
+print(f"Distancia lote San Carlos – Las Margaritas (solo brillo solar): {DIST_MARG:.1f} km")
 """)
 
 md(r"""
@@ -359,6 +366,15 @@ for k, p in PUNTOS.items():
     era5d[k]["bs"] = era5d[k]["bs"] / 3600                 # segundos -> horas de sol por día
     # Unidades: rad MJ/m²/día, etp mm/día, prec mm/día, bs h/día
 print({k: (v.index.min().date(), v.index.max().date()) for k, v in era5h.items()})
+
+# ERA5 diario en la celda de Las Margaritas: solo para validar el brillo solar (sección 3.3)
+era5d["margaritas"] = renombrar(open_meteo(MARGARITAS["lat"], MARGARITAS["lon"],
+                                           dict(daily="shortwave_radiation_sum,et0_fao_evapotranspiration,precipitation_sum,"
+                                                      "sunshine_duration", models="era5"),
+                                           CRUDOS / "margaritas" / "era5_diario.csv"),
+                                {"shortwave_radiation_sum": "rad", "et0_fao_evapotranspiration": "etp",
+                                 "precipitation_sum": "prec", "sunshine_duration": "bs"})
+era5d["margaritas"]["bs"] = era5d["margaritas"]["bs"] / 3600
 """)
 
 md(r"""
@@ -580,11 +596,12 @@ def excel_dhime(carpeta):
     return sorted(a for a in carpeta.iterdir()
                   if a.suffix.lower() in (".xls", ".xlsx") and not a.name.startswith(("~$", ".~lock")))
 
-def cargar_dhime():
-    carpeta = DHIME_DIR
-    archivos = excel_dhime(carpeta)
+def cargar_dhime(carpeta, estacion):
+    # Lee los Excel DHIME de 'carpeta' que pertenezcan a 'estacion' (dict con nombre y código)
+    archivos = excel_dhime(carpeta) if carpeta.exists() else []
     if not archivos and MODO_DATOS == "descargar":
-        carpeta = CONGELADOS / "palomera" / "dhime"; archivos = excel_dhime(carpeta)
+        carpeta = CONGELADOS / carpeta.relative_to(CRUDOS)
+        archivos = excel_dhime(carpeta) if carpeta.exists() else []
         if archivos:
             print("   ⚠️ DHIME no tiene API: se usan los Excel DHIME de", carpeta)
     partes, inventario = [], []
@@ -593,17 +610,17 @@ def cargar_dhime():
         if t.empty:
             print("   ⚠️", a.name, "no tiene datos reconocibles"); continue
         estaciones = t.estacion.unique()
-        if not any(PALOMERA["codigo"].lstrip("0") in e for e in estaciones):
+        if not any(estacion["codigo"].lstrip("0") in e for e in estaciones):
             print(f"   ⚠️ {a.name} es de otra estación ({', '.join(estaciones)}); se ignora"); continue
-        t = t[t.estacion.str.contains(PALOMERA["codigo"].lstrip("0")) & t["var"].notna()]
+        t = t[t.estacion.str.contains(estacion["codigo"].lstrip("0")) & t["var"].notna()]
         registrar(a, "IDEAM DHIME (descarga manual)", URL_DHIME,
-                  dict(estacion=PALOMERA["nombre"], variables=sorted(t["var"].unique()),
+                  dict(estacion=estacion["nombre"], variables=sorted(t["var"].unique()),
                        parametros=sorted(t.parametro.unique()), frecuencia="Diaria"),
                   descargado_ahora=False, nota=f"reporte DHIME generado el {generado}",
                   fecha=f"{generado} (reporte DHIME)" if generado else None)
         for v, g in t.groupby("var"):
             ap = g.aprobacion.value_counts(normalize=True).mul(100).round(1)
-            inventario.append(dict(variable=v, archivo=a.name, parametro=g.parametro.iloc[0],
+            inventario.append(dict(estacion=estacion["nombre"], variable=v, archivo=a.name, parametro=g.parametro.iloc[0],
                                    desde=g.fecha.min().date(), hasta=g.fecha.max().date(), n_dias=g.valor.notna().sum(),
                                    **{f"pct_{k}": x for k, x in ap.items()}))
         partes.append(t)
@@ -619,11 +636,11 @@ def cargar_dhime():
     ancho.index.name = "fecha"
     return ancho, pd.DataFrame(inventario)
 
-pal_dhime, DHIME_INV = cargar_dhime()
-faltan = [v for v in ("bs", "hr", "prec", "tmax", "tmin", "tmed") if f"{v}_dhime" not in pal_dhime]
-print("Variables DHIME disponibles:", [c.replace("_dhime", "") for c in pal_dhime.columns] or "ninguna")
-if faltan:
-    print("Faltan en", DHIME_DIR, "→", faltan, "(descárguelas de DHIME siguiendo la tabla de arriba)")
+pal_dhime, inv_pal = cargar_dhime(DHIME_DIR, PALOMERA)
+marg_dhime, inv_marg = cargar_dhime(DHIME_MARG, MARGARITAS)     # brillo solar regional (sección 3.3)
+DHIME_INV = pd.concat([inv_pal, inv_marg], ignore_index=True)
+print("Las Margaritas, brillo solar DHIME:", "disponible" if "bs_dhime" in marg_dhime else "no disponible")
+print("Variables DHIME de La Palomera:", [c.replace("_dhime", "") for c in pal_dhime.columns] or "ninguna")
 DHIME_INV
 """)
 
@@ -1020,33 +1037,80 @@ VALID_DHIME[VALID_DHIME.ventana == "Ene–Abr"] if len(VALID_DHIME) else None
 """)
 
 md(r"""
-### Figura 3.4 – Brillo solar: La Palomera (DHIME) vs. ERA5
-Izquierda: ciclo anual medio, solo con los días que tienen las dos fuentes. Derecha: periodos de 8 días de enero–abril. Aparece solo si está el archivo DHIME de brillo solar.
+## 3.3 Brillo solar: validación regional de ERA5 con Hacienda Las Margaritas
+
+**Problema.** La Palomera, la única estación climática cerca del lote, **no mide brillo solar**. La estación más cercana que sí lo mide es **Hacienda Las Margaritas AUT [35125010]** (Puerto López), a ~40 km del lote, en la misma sabana y a una altitud parecida (178 m).
+
+**Qué se hace.** ERA5 se valida **en la celda de Las Margaritas** contra lo que midió esa estación (DHIME, brillo solar total diario). Así la comparación mide el desempeño de ERA5 y no la distancia. Si ERA5 reproduce bien la variación del brillo solar allá, hay respaldo para usar ERA5 en el lote. Además se comprueba si el brillo solar de ERA5 en el lote y en Las Margaritas varía igual (coherencia regional).
+
+**Limitación.** Es una validación **regional, no local**. La nubosidad convectiva puede diferir a 40 km de un día a otro, así que el acuerdo diario esperado es menor que a 8 días o mensual. Las relaciones del brillo solar con la enfermedad se reportan como **exploratorias**.
+
+**Un sesgo constante no afecta la correlación de Spearman**, que solo usa el orden de los valores. Por eso no hace falta corregir el sesgo de ERA5 para las secciones 8 y 9. Lo que importa es que ERA5 siga los cambios de un periodo a otro (r).
 """)
 code(r"""
-if not pal_dhime.empty and "bs_dhime" in bd:
-    b2 = bd[["bs_dhime", "bs_era5"]].dropna()
-    cl = b2.groupby(b2.index.month).mean()
-    fig, axs = plt.subplots(1, 2, figsize=(11, 3.8))
-    ax = axs[0]; ax.axvspan(0.5, 4.5, color="#f0f0f0", zorder=0)
-    ax.plot(cl.index, cl.bs_dhime, marker="o", ms=4, color=COL_FUENTE["La Palomera (obs.)"], label="La Palomera (DHIME)")
-    ax.plot(cl.index, cl.bs_era5, marker="o", ms=4, color=COL_FUENTE["ERA5"], label="ERA5")
-    ax.set_xticks(range(1, 13)); ax.set_xticklabels([MESES[i] for i in range(1, 13)])
-    ax.set_ylabel("horas de sol por día"); ax.set_ylim(0, None); ax.legend(); ax.set_title("Ciclo anual medio")
-    ax = axs[1]
-    a8 = agregar(bd[bd.index.month.isin(VENTANA_MESES)][["bs_dhime", "bs_era5"]], "8 días", False).dropna()
-    d1 = bd[bd.index.month.isin(VENTANA_MESES)][["bs_dhime", "bs_era5"]].dropna()
-    ax.scatter(d1.bs_dhime, d1.bs_era5, s=6, color="#bdbdbd", alpha=0.5, label="diaria")
-    ax.scatter(a8.bs_dhime, a8.bs_era5, s=14, color=COL_FUENTE["ERA5"], label="8 días")
-    ax.plot([0, 12], [0, 12], "--", color="#555", lw=1)
-    ax.text(0.03, 0.97, f"r diaria = {d1.bs_dhime.corr(d1.bs_era5):.2f}\nr 8 días = {a8.bs_dhime.corr(a8.bs_era5):.2f}",
-            transform=ax.transAxes, va="top", fontsize=8.5)
-    ax.set_xlabel("La Palomera, DHIME (h/día)"); ax.set_ylabel("ERA5 (h/día)"); ax.legend(loc="lower right")
-    ax.set_title("Enero–abril")
-    fig.suptitle("Brillo solar: estación vs. reanálisis", y=1.03)
-    guardar(fig, "3_4_brillo_solar_dhime_era5")
+VALID_BS = pd.DataFrame()
+if "bs_dhime" in marg_dhime:
+    bm = pd.DataFrame({"obs": marg_dhime["bs_dhime"], "era5": era5d["margaritas"]["bs"],
+                       "era5_lote": era5d["sancarlos"]["bs"]}).reindex(idx_dia)
+    filas = []
+    for ventana, sel in [("Ene–Abr", bm.index.month.isin(VENTANA_MESES)), ("Año completo", slice(None))]:
+        for escala in ["diaria", "8 días", "mensual"]:
+            a = agregar(bm[sel][["obs", "era5"]], escala, False)
+            filas.append(dict(ventana=ventana, escala=escala, comparacion="ERA5 vs. estación (celda Las Margaritas)",
+                              **metricas(a["obs"], a["era5"])))
+            c = agregar(bm[sel][["era5", "era5_lote"]], escala, False)
+            filas.append(dict(ventana=ventana, escala=escala, comparacion="ERA5 lote vs. ERA5 Las Margaritas (coherencia)",
+                              **metricas(c["era5"], c["era5_lote"])))
+    VALID_BS = pd.DataFrame(filas).round(3)
+    print(f"Las Margaritas: {bm.obs.notna().sum()} días con brillo solar ({bm.obs.first_valid_index():%Y-%m-%d} a "
+          f"{bm.obs.last_valid_index():%Y-%m-%d}); distancia al lote {DIST_MARG:.1f} km")
+    print(VALID_BS[VALID_BS.ventana == "Ene–Abr"][["escala", "comparacion", "n", "media_obs", "media_prod", "sesgo",
+                                                  "r_pearson", "rho_spearman"]].to_string(index=False))
 else:
-    print("Sin archivo DHIME de brillo solar: no se dibuja la figura.")
+    print("No está el archivo DHIME de brillo solar de Las Margaritas en", DHIME_MARG)
+VALID_BS
+""")
+
+md(r"""
+### Figura 3.4 – Brillo solar: ERA5 vs. Hacienda Las Margaritas
+Izquierda: ciclo anual medio de la estación, de ERA5 en su celda y de ERA5 en el lote, solo con días que tienen dato en la estación. Derecha: enero–abril, cada punto es un día (gris) o un periodo de 8 días (color).
+""")
+code(r"""
+if len(VALID_BS):
+    b2 = bm.dropna(subset=["obs", "era5"])
+    cl = b2.groupby(b2.index.month).mean()
+    fig, axs = plt.subplots(1, 2, figsize=(11.5, 3.9))
+    ax = axs[0]; ax.axvspan(0.5, 4.5, color="#f0f0f0", zorder=0)
+    ax.plot(cl.index, cl.obs, marker="o", ms=4, color="#2b2b2b", label="Las Margaritas (DHIME)")
+    ax.plot(cl.index, cl.era5, marker="o", ms=4, color=COL_FUENTE["ERA5"], label="ERA5, celda Las Margaritas")
+    ax.plot(cl.index, cl.era5_lote, marker="o", ms=3, ls="--", color="#eb6834", label="ERA5, celda del lote")
+    ax.set_xticks(range(1, 13)); ax.set_xticklabels([MESES[i] for i in range(1, 13)])
+    ax.set_ylabel("horas de sol por día"); ax.set_ylim(0, None); ax.legend(fontsize=8); ax.set_title("Ciclo anual medio")
+    ax = axs[1]
+    v = bm[bm.index.month.isin(VENTANA_MESES)]
+    d1 = v[["obs", "era5"]].dropna(); a8 = agregar(v[["obs", "era5"]], "8 días", False).dropna()
+    ax.scatter(d1.obs, d1.era5, s=6, color="#bdbdbd", alpha=0.5, label="diaria")
+    ax.scatter(a8.obs, a8.era5, s=14, color=COL_FUENTE["ERA5"], label="8 días")
+    ax.plot([0, 12], [0, 12], "--", color="#555", lw=1)
+    ax.text(0.03, 0.97, f"r diaria = {d1.obs.corr(d1.era5):.2f}\nr 8 días = {a8.obs.corr(a8.era5):.2f}",
+            transform=ax.transAxes, va="top", fontsize=8.5,
+            bbox=dict(facecolor="white", edgecolor="none", alpha=0.85))
+    ax.set_xlabel("Las Margaritas, DHIME (h/día)"); ax.set_ylabel("ERA5 (h/día)"); ax.legend(loc="lower right")
+    ax.set_title("Enero–abril")
+    fig.suptitle(f"Brillo solar: validación regional de ERA5 (Las Margaritas, a {DIST_MARG:.0f} km del lote)", y=1.03)
+    guardar(fig, "3_4_brillo_solar_margaritas_era5")
+else:
+    print("Sin brillo solar de Las Margaritas: no se dibuja la figura.")
+""")
+
+md(r"""
+### Interpretación del brillo solar (datos congelados, ene–abr)
+- **Ciclo estacional: sí.** ERA5 reproduce que enero–febrero es el periodo más soleado y junio–julio el menos soleado, igual que la estación.
+- **Valor absoluto: no.** ERA5 marca ~10.6 h de sol por día frente a ~5.5 h medidas, un sesgo de **+5 h/día**. Muchos días ERA5 queda pegado cerca de **12 h**, el máximo posible, aunque la estación mida 2–6 h. El reanálisis tiene menos nubes de las reales, y la definición calculada (radiación directa > 120 W/m²) no equivale exactamente al heliógrafo.
+- **Variación entre días y entre años: débil.** r ≈ 0.41 diaria, 0.43 a 8 días y 0.26 mensual. La radiación de onda corta de ERA5 rinde casi igual (r ≈ 0.46 diaria), así que el problema es la nubosidad del reanálisis, no la variable elegida.
+- **Coherencia regional: alta.** ERA5 en el lote y en Las Margaritas varía casi igual (r ≈ 0.98), pero eso solo muestra que el reanálisis es suave en el espacio, no que acierte.
+
+**Conclusión para el artículo.** El brillo solar de ERA5 sirve como indicador de la **estacionalidad** (seca vs. lluviosa), pero no para comparar días o años concretos. Sus correlaciones con la enfermedad (secciones 8–9) son **exploratorias** y no deben interpretarse como un efecto de la radiación. La única forma de mejorar esta variable sería medir radiación o brillo solar en el lote o en La Palomera.
 """)
 
 # =====================================================================================
@@ -1821,7 +1885,8 @@ LEEME = pd.DataFrame([
     ("clima_diario", "Base climática diaria del lote 2011-2025. Sufijos: _era5c ERA5-Land con HR corregida (principal T/HR), _era5 ERA5-Land/ERA5 sin corregir (bs_era5 = brillo solar ERA5, h/día), _chirps CHIRPS (principal lluvia), _pal La Palomera automática (tmax/tmin de sensores de extremos), _dhime La Palomera serie oficial DHIME. _ma3r/_ma7r medias móviles retrasadas, _ma3c/_ma7c centradas, _acum lluvia acumulada. salb_fav/clf_fav días favorables (1/0)."),
     ("clima_8dias_ene_abr", "Agregados por periodos de 8 días (desde el 1 de enero) en enero-abril, por año."),
     ("validacion_palomera", "Métricas estación La Palomera vs. ERA5-Land y CHIRPS en la celda de la estación, por escala (diaria, 8 días, mensual) y ventana."),
-    ("dhime_inventario", "Archivos DHIME cargados: variable, parámetro, periodo y % de datos por nivel de aprobación."),
+    ("dhime_inventario", "Archivos DHIME cargados (La Palomera y Las Margaritas): variable, parámetro, periodo y % de datos por nivel de aprobación."),
+    ("validacion_brillo_solar", "Brillo solar de ERA5 vs. estación Hacienda Las Margaritas (validación regional, a ~40 km del lote) y coherencia ERA5 lote vs. Las Margaritas."),
     ("consistencia_dhime", "DHIME vs. estación automática de datos.gov.co (misma estación), con y sin filtro del sensor, desfase 0 y 1 día."),
     ("validacion_dhime", "Productos (ERA5, ERA5-Land, CHIRPS) vs. serie diaria oficial DHIME, incluido el brillo solar, por escala y ventana."),
     ("deteccion_lluvia", "POD, FAR y CSI de días lluviosos (≥1 mm) en ene-abr; desfase 1 = producto comparado con el día siguiente."),
@@ -1845,7 +1910,7 @@ with pd.ExcelWriter(ruta_xlsx) as xw:
     LEEME.to_excel(xw, sheet_name="LEEME", index=False)
     PROCEDENCIA.to_excel(xw, sheet_name="procedencia_datos", index=False)
     VERSIONES.to_excel(xw, sheet_name="versiones_software", index=False)
-    for nombre, tabla in [("dhime_inventario", DHIME_INV), ("consistencia_dhime", CONSIST_DHIME), ("validacion_dhime", VALID_DHIME)]:
+    for nombre, tabla in [("dhime_inventario", DHIME_INV), ("consistencia_dhime", CONSIST_DHIME), ("validacion_dhime", VALID_DHIME), ("validacion_brillo_solar", VALID_BS)]:
         if len(tabla): tabla.to_excel(xw, sheet_name=nombre, index=False)
     if len(SENSOR_DHIME): SENSOR_DHIME.to_excel(xw, sheet_name="sensor_T_dhime", index=False)
     D.round(3).to_excel(xw, sheet_name="clima_diario")
@@ -1883,6 +1948,11 @@ v = VALIDACION[(VALIDACION.ventana == "Ene–Abr")].set_index(["escala", "variab
 for var, prod in [("T media (°C)", "ERA5-Land"), ("Horas HR≥90 % (h/día)", "ERA5-Land"), ("Lluvia (mm)", "CHIRPS"), ("Lluvia (mm)", "ERA5")]:
     rr = [v.loc[(e, var, prod), "r_pearson"] if (e, var, prod) in v.index else np.nan for e in ("diaria", "8 días", "mensual")]
     linea(f"Ene–abr {var} {prod}: r diaria {rr[0]:.2f} · 8 días {rr[1]:.2f} · mensual {rr[2]:.2f}")
+if len(VALID_BS):
+    vb = VALID_BS[(VALID_BS.ventana == "Ene–Abr") & VALID_BS.comparacion.str.startswith("ERA5 vs.")].set_index("escala")
+    linea(f"Ene–abr brillo solar ERA5 vs. Las Margaritas ({DIST_MARG:.0f} km): r diaria {vb.loc['diaria', 'r_pearson']:.2f} · "
+          f"8 días {vb.loc['8 días', 'r_pearson']:.2f} · mensual {vb.loc['mensual', 'r_pearson']:.2f}; "
+          f"sesgo {vb.loc['diaria', 'sesgo']:+.1f} h/día")
 if len(VALID_DHIME):
     vd = VALID_DHIME[VALID_DHIME.ventana == "Ene–Abr"].set_index(["escala", "variable", "producto"])
     for var, prod in [("Brillo solar (h/día)", "ERA5"), ("T máxima (°C)", "ERA5-Land"), ("T mínima (°C)", "ERA5-Land")]:
@@ -1908,7 +1978,7 @@ md(r"""
 3. **Tamaño de muestra.** Solo hay 3 temporadas enero–abril completas con enfermedad (2018–2020; en 2017 solo hay evaluaciones desde el 27 de marzo) y un lote. Las correlaciones son exploratorias; la relación entre años (p. ej. 2018 con más SALB) depende de pocos casos.
 4. **Fenología como confusor.** Gran parte de la variación de la enfermedad sigue a la aparición de hojas jóvenes. Por eso el modelo GEE incluye el % de hojas jóvenes: el efecto del clima se interpreta *dado* un nivel de follaje susceptible.
 5. **Sensor de temperatura de La Palomera.** Entre 2011 y 2012 marcó medias de 12–15 °C (error del sensor). Se reportan los resultados con y sin filtro (secciones 3.1 y 8.3). La conclusión principal usa la versión con filtro; el efecto sobre la relación con el cultivo depende de los días afectados en 2016–2020 (tabla 3.1). Conviene informarlo al IDEAM.
-6. **Variables que La Palomera no registra.** La estación no mide brillo solar y DHIME no publica su lluvia. La lluvia observada viene del pluviómetro automático (datos.gov.co, desde 2017). El brillo solar viene solo de ERA5 y no se validó localmente; la estación más cercana que lo mide (Hacienda Las Margaritas) está a 39.9 km. Por eso las relaciones con el brillo solar son exploratorias.
+6. **Variables que La Palomera no registra.** La estación no mide brillo solar y DHIME no publica su lluvia. La lluvia observada viene del pluviómetro automático (datos.gov.co, desde 2017). El brillo solar viene de ERA5 y se validó de forma **regional** con Hacienda Las Margaritas (Puerto López), la estación más cercana que lo mide, a ~40 km del lote (sección 3.3). La validación se hizo en la celda de Las Margaritas, así que mide el desempeño de ERA5 y no el clima del lote. A 40 km la nubosidad diaria puede diferir; por eso las relaciones del brillo solar con la enfermedad son exploratorias.
 7. **Reproducibilidad.** El cuaderno descarga todo desde las fuentes originales (`MODO_DATOS = "descargar"`), salvo DHIME, que se descarga a mano. Los datos usados en el artículo quedan congelados en `datos_crudos/` con su registro SHA-256. Las fuentes se revisan con el tiempo, así que una descarga nueva puede dar cifras algo distintas; por eso conviene depositar la carpeta congelada con DOI (p. ej. Zenodo).
 8. **Siguientes pasos sugeridos:** (a) incluir el índice ONI (El Niño/La Niña) para explicar diferencias entre años; (b) instalar un sensor de mojadura foliar en el lote durante una temporada para validar el umbral de 10 h; (c) si hay datos de otros lotes, repetir el cuaderno cambiando las coordenadas en la celda 0.2.
 

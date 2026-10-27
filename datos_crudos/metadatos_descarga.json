@@ -2,7 +2,7 @@
   "proyecto": "Lote San Carlos – clima y cultivo de caucho",
   "cuaderno": "Analisis_SanCarlos_clima_cultivo.ipynb",
   "modo_datos": "reutilizar",
-  "ejecutado": "2026-10-27T17:49:53",
+  "ejecutado": "2026-10-27T18:15:26",
   "periodo": [
     "2011-01-01",
     "2025-12-31"
@@ -105,6 +105,25 @@
       "bytes": 190542,
       "sha256": "558c5953ab5b8ce0b51a29bd7cb2313dff695de26f652d5ee28ee6b84d6f0098",
       "nota": "celda del modelo: 4.2500, -72.5000; elevación 180.0 m"
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/margaritas/era5_diario.csv",
+      "fuente": "ERA5 (ECMWF/Copernicus) vía Open-Meteo",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "parametros": {
+        "latitude": 4.369889,
+        "longitude": -72.227064,
+        "start_date": "2011-01-01",
+        "end_date": "2025-12-31",
+        "timezone": "America/Bogota",
+        "daily": "shortwave_radiation_sum,et0_fao_evapotranspiration,precipitation_sum,sunshine_duration",
+        "models": "era5"
+      },
+      "fecha_descarga": "2026-10-27T18:10:55",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 190788,
+      "sha256": "3a0417c272bef3625692bbedb8b99251fc22ec09448c424a9c0b9ce73ecf4d1a",
+      "nota": "celda del modelo: 4.2500, -72.2500; elevación 179.0 m"
     },
     {
       "archivo": "san_carlos/datos_crudos/chirps_diario.csv",
@@ -230,6 +249,26 @@
       "origen_en_esta_ejecucion": "reutilizado",
       "bytes": 165048,
       "sha256": "f4d6cd752358a6b20244dbd46cf266492bd4113b6d7d5a7a630a290ac585714b",
+      "nota": "reporte DHIME generado el 02/08/2026 02:59"
+    },
+    {
+      "archivo": "san_carlos/datos_crudos/margaritas/dhime/DHIME_BS_LasMargaritas.xlsx",
+      "fuente": "IDEAM DHIME (descarga manual)",
+      "url": "http://dhime.ideam.gov.co/atencionciudadano/",
+      "parametros": {
+        "estacion": "Hacienda Las Margaritas AUT [35125010]",
+        "variables": [
+          "bs"
+        ],
+        "parametros": [
+          "Brillo solar total diario,Humedad relativa del aire a 2 metros media diaria"
+        ],
+        "frecuencia": "Diaria"
+      },
+      "fecha_descarga": "02/08/2026 02:59 (reporte DHIME)",
+      "origen_en_esta_ejecucion": "reutilizado",
+      "bytes": 125501,
+      "sha256": "293e96feca99356b05234b9779281f342a4eb5def1ab8e3822c1f7a533406213",
       "nota": "reporte DHIME generado el 02/08/2026 02:59"
     }
   ]
