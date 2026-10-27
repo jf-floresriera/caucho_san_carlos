@@ -27,6 +27,22 @@ Preguntas que responde el cuaderno:
 | 2 | ¿La información **cada 8 días** presenta cambios? | 6 |
 | 3 | ¿Cómo evolucionan la **incidencia** de SALB y Antracnosis en los campos clonales, y qué clima la explica? | 7–8 |
 
+### 📍 Lote y estación de referencia
+
+| | Latitud | Longitud |
+|---|---|---|
+| **Lote San Carlos** | 4°11'15.52" N | 72°32'14.55" O |
+
+**La Palomera AUT [35185010]** está a **8.6 km** y es la **única estación climática activa cerca del lote**. Según el catálogo del IDEAM, la siguiente estación con temperatura y humedad está a casi 40 km (Hacienda Las Margaritas). Las intermedias son pluviométricas, limnimétricas o están suspendidas. Por eso La Palomera es la referencia observada para validar los productos y corregir la humedad.
+
+| Estación | Categoría | Estado | Distancia |
+|---|---|---|---|
+| **La Palomera AUT** | Agrometeorológica, automática | Activa | **8.6 km** |
+| Fundo Nuevo Humapo | Pluviométrica | Activa | 22.5 km |
+| Cabuyaro | Meteorológica especial | Suspendida | 30.3 km |
+| Lajitas | Climatológica ordinaria | Suspendida | 38.4 km |
+| Hacienda Las Margaritas AUT | Climatológica principal | Activa | 39.9 km |
+
 Todo está en un solo cuaderno documentado celda por celda: [`Analisis_SanCarlos_clima_cultivo.ipynb`](Analisis_SanCarlos_clima_cultivo.ipynb).
 
 <img src="assets/readme/divider.svg" alt="" width="100%">

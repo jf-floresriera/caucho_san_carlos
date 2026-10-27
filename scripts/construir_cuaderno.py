@@ -200,6 +200,18 @@ print("Resultados en:", RESULT)
 md(r"""
 ## 0.3 Distancia lote – estación
 La distancia en línea recta sobre la esfera terrestre se calcula con la fórmula de *haversine*. Si la estación está cerca (< 10–15 km en terreno plano), su clima representa bien al lote.
+
+**¿Por qué La Palomera?** Es la **única estación climática activa cerca del lote**. Estas son las estaciones más cercanas según el catálogo oficial del IDEAM (datos.gov.co, 9 852 estaciones):
+
+| Estación | Categoría | Estado | Distancia al lote |
+|---|---|---|---|
+| **La Palomera AUT [35185010]** | **Agrometeorológica, automática** | **Activa** | **8.6 km** |
+| Fundo Nuevo Humapo [35180030] | Pluviométrica (solo lluvia) | Activa | 22.5 km |
+| Cabuyaro [35105030] | Meteorológica especial | Suspendida | 30.3 km |
+| Lajitas [35025010] | Climatológica ordinaria | Suspendida | 38.4 km |
+| Hacienda Las Margaritas AUT [35125010] | Climatológica principal | Activa | 39.9 km |
+
+Las demás estaciones dentro de ese radio son limnimétricas o limnigráficas, que miden el nivel de los ríos. No hay otra estación que mida temperatura, humedad o brillo solar a menos de ~40 km, así que La Palomera es la referencia observada del lote. Por eso se valida con ella y se usa para corregir la HR de ERA5-Land.
 """)
 
 code(r"""
