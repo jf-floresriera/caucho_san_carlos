@@ -520,27 +520,24 @@ print("Periodo:", pal_h.index.min(), "→", pal_h.index.max())
 """)
 
 md(r"""
-## 1.4 Serie diaria oficial de La Palomera en DHIME (incluye brillo solar)
-**DHIME** (http://dhime.ideam.gov.co/atencionciudadano/) es el sistema oficial del IDEAM. Allí cada dato diario tiene un **nivel de aprobación** (*Definitivo*, *En revisión* o *Preliminar*), y es la única fuente del **brillo solar**. No tiene API, así que se descarga a mano **una vez** y los Excel se guardan en `san_carlos/datos_crudos/palomera/dhime/`.
+## 1.4 Serie diaria oficial de La Palomera en DHIME
+**DHIME** (http://dhime.ideam.gov.co/atencionciudadano/) es el sistema oficial del IDEAM. Allí cada dato diario tiene un **nivel de aprobación** (*Definitivo*, *En revisión* o *Preliminar*). No tiene API, así que se descarga a mano **una vez** y los Excel se guardan en `san_carlos/datos_crudos/palomera/dhime/`.
 
-**Pasos en DHIME:**
-1. Entre a la página, acepte los términos y abra *Consultar y descargar datos*.
-2. En el filtro de estaciones busque **35185010** (LA PALOMERA - AUT).
-3. Elija **Frecuencia: Diaria** y el rango de fechas **01/01/2010 hasta hoy**.
-4. Haga una consulta por cada fila de la tabla, agréguela y descargue el Excel.
+**Qué hay de La Palomera en cada fuente** (revisado en DHIME el 27-oct-2026):
 
-| Archivo sugerido | Variable | Parámetro |
+| Variable | datos.gov.co (sensores automáticos) | DHIME (diaria oficial) |
 |---|---|---|
-| `DHIME_BS_LaPalomera.xlsx` | BRILLO SOLAR | Brillo solar total diario |
-| `DHIME_HR_LaPalomera.xlsx` | HUM RELATIVA | Humedad relativa del aire a 2 metros media diaria |
-| `DHIME_PREC_LaPalomera.xlsx` | PRECIPITACION | Precipitación total diaria (o *Día pluviométrico*) |
-| `DHIME_TMAX_LaPalomera.xlsx` | TEMPERATURA | Temperatura máxima diaria |
-| `DHIME_TMIN_LaPalomera.xlsx` | TEMPERATURA | Temperatura mínima diaria |
-| `DHIME_TMED_LaPalomera.xlsx` | TEMPERATURA | Temperatura seca media diaria |
+| Humedad relativa | ✅ horaria | ✅ `DHIME_HR_LaPalomera.xlsx` |
+| Temperatura media, máxima y mínima | ✅ horaria | — no se usa (la automática basta) |
+| Precipitación | ✅ cada 10 min, desde 2017 | ❌ no la reporta (*Día pluviométrico*, total mensual y anual solo existen para estaciones convencionales) |
+| Brillo solar | ❌ | ❌ **la estación no lo registra** |
 
-El nombre del archivo no importa. El código lee el encabezado de cada Excel (estación, variable, parámetro, fecha del reporte) y así sabe qué contiene. Si un archivo es de otra estación, se avisa y se ignora.
+En consecuencia:
+- **La lluvia observada** del lote sale del pluviómetro automático de La Palomera (sección 1.3), que cubre todos los años del cultivo.
+- **El brillo solar** solo se tiene de **ERA5** (sección 1.1) y no se puede validar con una estación cercana. Es una limitación: se reporta como variable exploratoria. La estación más cercana con brillo solar es Hacienda Las Margaritas, a 39.9 km.
+- **DHIME** sirve aquí para comprobar la HR automática contra la serie oficial (r ≈ 1).
 
-Lo que falte simplemente se omite: el análisis principal no depende de DHIME. DHIME sirve para **(a)** validar ERA5 con el brillo solar, **(b)** comprobar la serie automática de datos.gov.co contra la oficial y **(c)** ver si la serie oficial también tiene el problema del sensor de T de 2011–2012.
+El código lee cualquier Excel de DHIME en la carpeta, sea cual sea su nombre, porque identifica estación, variable y parámetro por el encabezado. Si un archivo es de otra estación, se avisa y se ignora. Si se agregan más variables (por ejemplo T de DHIME), la sección 3.2 las valida automáticamente.
 
 En modo `"descargar"`, si la carpeta nueva no tiene archivos DHIME, se usan los de `datos_crudos/palomera/dhime/` y se avisa.
 """)
@@ -1906,8 +1903,9 @@ md(r"""
 3. **Tamaño de muestra.** Solo hay 3 temporadas enero–abril completas con enfermedad (2018–2020; en 2017 solo hay evaluaciones desde el 27 de marzo) y un lote. Las correlaciones son exploratorias; la relación entre años (p. ej. 2018 con más SALB) depende de pocos casos.
 4. **Fenología como confusor.** Gran parte de la variación de la enfermedad sigue a la aparición de hojas jóvenes. Por eso el modelo GEE incluye el % de hojas jóvenes: el efecto del clima se interpreta *dado* un nivel de follaje susceptible.
 5. **Sensor de temperatura de La Palomera.** Entre 2011 y 2012 marcó medias de 12–15 °C (error del sensor). Se reportan los resultados con y sin filtro (secciones 3.1 y 8.3). La conclusión principal usa la versión con filtro; el efecto sobre la relación con el cultivo depende de los días afectados en 2016–2020 (tabla 3.1). Conviene informarlo al IDEAM.
-6. **Reproducibilidad.** El cuaderno descarga todo desde las fuentes originales (`MODO_DATOS = "descargar"`), salvo DHIME, que se descarga a mano. Los datos usados en el artículo quedan congelados en `datos_crudos/` con su registro SHA-256. Las fuentes se revisan con el tiempo, así que una descarga nueva puede dar cifras algo distintas; por eso conviene depositar la carpeta congelada con DOI (p. ej. Zenodo).
-7. **Siguientes pasos sugeridos:** (a) incluir el índice ONI (El Niño/La Niña) para explicar diferencias entre años; (b) instalar un sensor de mojadura foliar en el lote durante una temporada para validar el umbral de 10 h; (c) si hay datos de otros lotes, repetir el cuaderno cambiando las coordenadas en la celda 0.2.
+6. **Variables que La Palomera no registra.** La estación no mide brillo solar y DHIME no publica su lluvia. La lluvia observada viene del pluviómetro automático (datos.gov.co, desde 2017). El brillo solar viene solo de ERA5 y no se validó localmente; la estación más cercana que lo mide (Hacienda Las Margaritas) está a 39.9 km. Por eso las relaciones con el brillo solar son exploratorias.
+7. **Reproducibilidad.** El cuaderno descarga todo desde las fuentes originales (`MODO_DATOS = "descargar"`), salvo DHIME, que se descarga a mano. Los datos usados en el artículo quedan congelados en `datos_crudos/` con su registro SHA-256. Las fuentes se revisan con el tiempo, así que una descarga nueva puede dar cifras algo distintas; por eso conviene depositar la carpeta congelada con DOI (p. ej. Zenodo).
+8. **Siguientes pasos sugeridos:** (a) incluir el índice ONI (El Niño/La Niña) para explicar diferencias entre años; (b) instalar un sensor de mojadura foliar en el lote durante una temporada para validar el umbral de 10 h; (c) si hay datos de otros lotes, repetir el cuaderno cambiando las coordenadas en la celda 0.2.
 
 **Referencias de métodos:** McKinney (1923) índice de severidad; Shaner & Finney (1977) ABCPE; Liang & Zeger (1986) GEE; Benjamini & Hochberg (1995) FDR; Themeßl et al. (2011) mapeo de cuantiles; Hallé et al. (1978) estados foliares del caucho; Funk et al. (2015) CHIRPS; Muñoz-Sabater et al. (2021) ERA5-Land; Hersbach et al. (2020) ERA5; Zippenfenig (2023) Open-Meteo.
 

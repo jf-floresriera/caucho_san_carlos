@@ -143,7 +143,7 @@ Cada archivo queda registrado en [`datos_crudos/metadatos_descarga.json`](datos_
 | ERA5 | API Open-Meteo, `models=era5` | lluvia, radiación, **brillo solar**, ETo (diario) |
 | CHIRPS v2.0 | API ClimateSERV | lluvia (diaria, 5 km) |
 | IDEAM La Palomera AUT [35185010] | datos.gov.co (`uext-mhny`, `sbwg-7ju4`, `ccvq-rp9s`, `afdg-3zpb`, `s54a-sgyg`) | HR, T, T máx, T mín, lluvia |
-| IDEAM DHIME | descarga manual (no tiene API) | brillo solar, HR, lluvia, T máx, T mín, T media (diario oficial) |
+| IDEAM DHIME | descarga manual (no tiene API) | HR diaria oficial (La Palomera no reporta brillo solar ni lluvia en DHIME) |
 
 ### ¿Qué subir a Google Drive para usarlo en Colab?
 
@@ -153,22 +153,25 @@ MyDrive/tapiero/
 └── san_carlos/                                    ← este repositorio
     ├── Analisis_SanCarlos_clima_cultivo.ipynb
     └── datos_crudos/
-        ├── palomera/dhime/*.xlsx                  ← siempre (descarga manual de DHIME)
+        ├── palomera/dhime/DHIME_HR_LaPalomera.xlsx  ← ya incluido
         └── (resto)                                ← solo para el modo "reutilizar"
 ```
 
 > 🔒 **Los datos de campo** (`Fenologia_base Orinoquia.xlsx`) no se publican aquí hasta que salga el artículo. Hay que ponerlos en la carpeta **padre** del repositorio.
 
-### Archivos DHIME de La Palomera
+### ¿Qué registra La Palomera?
 
-Se descargan en [DHIME](http://dhime.ideam.gov.co/atencionciudadano/) con frecuencia diaria, de 01/01/2010 a hoy, y se guardan en `datos_crudos/palomera/dhime/`. El código reconoce cada archivo por su encabezado, así que el nombre no importa.
+Revisado en datos.gov.co y en [DHIME](http://dhime.ideam.gov.co/atencionciudadano/) el 27-oct-2026:
 
-| Variable | Parámetro | Estado |
+| Variable | Sensores automáticos (datos.gov.co) | DHIME (diaria oficial) |
 |---|---|---|
-| HUM RELATIVA | Humedad relativa media diaria | ✅ |
-| BRILLO SOLAR | Brillo solar total diario | ⬜ pendiente |
-| PRECIPITACION | Precipitación total diaria | ⬜ pendiente |
-| TEMPERATURA | Máxima, mínima y seca media diaria | ⬜ pendiente |
+| Humedad relativa | ✅ horaria | ✅ (en `datos_crudos/palomera/dhime/`) |
+| Temperatura media, máxima y mínima | ✅ horaria | no se usa |
+| Precipitación | ✅ cada 10 min, desde 2017 | ❌ no la reporta |
+| Brillo solar | ❌ | ❌ la estación no lo registra |
+
+- **Lluvia:** se usa el pluviómetro automático, que cubre todos los años del cultivo. *Día pluviométrico*, total mensual y total anual son parámetros DHIME de estaciones convencionales y no existen para La Palomera.
+- **Brillo solar:** solo se tiene de **ERA5**, sin validación local. La estación más cercana que lo mide es Hacienda Las Margaritas, a 39.9 km. Se reporta como variable exploratoria.
 
 <img src="assets/readme/divider.svg" alt="" width="100%">
 
