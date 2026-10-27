@@ -15,3 +15,7 @@ resultados_descarga_*/
 # Copias de trabajo (el historial de git ya guarda las versiones)
 scripts/construir_cuaderno_v2.py
 datos_crudos/palomera/_*_por_anio/
+
+# Bloqueos de LibreOffice/Excel
+.~lock.*
+~$*
