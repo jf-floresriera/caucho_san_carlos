@@ -98,3 +98,4 @@
   <circle cx="1146" cy="34" r="5" fill="#1baf7a"><animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>
   <text x="1128" y="39" font-family="'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace" font-size="12" fill="#8ea597" text-anchor="end">reproducible · SHA-256</text>
 </svg>
+

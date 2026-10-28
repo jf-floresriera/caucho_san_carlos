@@ -44,6 +44,7 @@ Preguntas que responde el cuaderno:
 | Hacienda Las Margaritas AUT | Climatológica principal | Activa | 39.9 km |
 
 Todo está en un solo cuaderno documentado celda por celda: [`Analisis_SanCarlos_clima_cultivo.ipynb`](Analisis_SanCarlos_clima_cultivo.ipynb).
+Hay también una copia en HTML con todas las salidas y figuras, que se abre en cualquier navegador sin instalar nada: [`Analisis_SanCarlos_clima_cultivo.html`](Analisis_SanCarlos_clima_cultivo.html). En GitHub, use *Download raw file* y ábrala en su computador.
 
 <img src="assets/readme/divider.svg" alt="" width="100%">
 
@@ -200,7 +201,7 @@ resultados/
   figuras/                               figuras PNG a 300 dpi
 scripts/
   construir_cuaderno.py                  genera el cuaderno (fuente del texto y el código)
-  ejecutar_cuaderno.py                   lo ejecuta en local
+  ejecutar_cuaderno.py                   lo ejecuta en local y exporta el HTML
   descargar_socrata_reanudable.py        descarga de datos.gov.co año por año, reanudable
   fix3.py … fix5.py                      parches aplicados (trazabilidad de los cambios)
 assets/readme/                           banner y gráficos animados de este README
